@@ -30,5 +30,11 @@ export default defineAppConfig({
         text: '到站确认'
       }
     ]
+  },
+  plugins: {
+    WechatSI: {
+      version: '0.3.5',
+      provider: 'wx069ba97219f66d99'
+    }
   }
 })

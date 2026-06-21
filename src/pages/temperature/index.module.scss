@@ -252,6 +252,18 @@
   border-radius: 4rpx;
 }
 
+.legendSafe {
+  background: #4CAF50;
+}
+
+.legendWarning {
+  background: #FF9800;
+}
+
+.legendDanger {
+  background: #F44336;
+}
+
 /* ========== 告警列表 ========== */
 .alertList {
   display: flex;

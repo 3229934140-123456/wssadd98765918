@@ -1,24 +1,41 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 import { useTripStore } from '@/store/trip-store';
-import { mockTripEvidence, cargoTypeLabels, stopTypeLabels } from '@/data/mock-data';
-import { formatDateTime, formatDuration } from '@/utils/temp-alert';
+import { cargoTypeLabels, stopTypeLabels } from '@/data/mock-data';
+import { formatDateTime } from '@/utils/temp-alert';
 
 const EvidenceDetailPage: React.FC = () => {
   const router = useRouter();
   const stopId = router.params.stopId;
+  const [evidence, setEvidence] = useState<any>(null);
 
-  const { driver, currentTask, tripEvidence } = useTripStore();
+  const { driver, currentTask, getEvidenceByStopId, arrivalRecords } = useTripStore();
 
-  const evidence = useMemo(() => {
-    return tripEvidence || mockTripEvidence;
-  }, [tripEvidence]);
+  useEffect(() => {
+    if (stopId) {
+      const found = getEvidenceByStopId(stopId);
+      console.log('[EvidenceDetail] 查询证据 stopId:', stopId, 'found:', !!found);
+      if (found) {
+        setEvidence(found);
+      } else {
+        const stopRecord = arrivalRecords.find(r => r.stopId === stopId);
+        if (stopRecord) {
+          console.log('[EvidenceDetail] 找到到站记录但无证据，自动生成');
+          const newEvidence = useTripStore.getState().generateEvidence(stopId);
+          setEvidence(newEvidence);
+        } else {
+          setEvidence(null);
+        }
+      }
+    }
+  }, [stopId, getEvidenceByStopId, arrivalRecords]);
 
   const stopRecord = useMemo(() => {
-    const found = evidence.arrivals.find(a => a.stopId === stopId);
+    if (!evidence) return null;
+    const found = evidence.arrivals.find((a: any) => a.stopId === stopId);
     if (found) return found;
     return evidence.arrivals[evidence.arrivals.length - 1] || null;
   }, [evidence, stopId]);
@@ -43,7 +60,7 @@ const EvidenceDetailPage: React.FC = () => {
 
   const tempItems = useMemo(() => {
     const readings = [...tempStats.readings].reverse().slice(0, 8);
-    const targetMax = 4;
+    const targetMax = Math.max(...evidence.cargoList.map((c: any) => c.targetTempMax));
     return readings.map(r => {
       const diff = r.temperature - targetMax;
       let level: 'safe' | 'warning' | 'danger' = 'safe';
@@ -89,6 +106,35 @@ const EvidenceDetailPage: React.FC = () => {
       });
     }, 1500);
   };
+
+  if (!evidence) {
+    return (
+      <ScrollView scrollY className={styles.page}>
+        <View style={{ padding: '120rpx 40rpx', textAlign: 'center' }}>
+          <Text style={{ fontSize: '100rpx' }}>📋</Text>
+          <View style={{ marginTop: '32rpx', fontSize: '36rpx', fontWeight: 600, color: '#37474F' }}>
+            暂无行程证据
+          </View>
+          <View style={{ marginTop: '16rpx', fontSize: '28rpx', color: '#78909C', lineHeight: 1.6 }}>
+            请先在「到站确认」页面完成到站登记并生成证据链
+          </View>
+          <View
+            style={{
+              marginTop: '48rpx',
+              padding: '24rpx 48rpx',
+              background: '#1E88E5',
+              color: '#fff',
+              borderRadius: '16rpx',
+              display: 'inline-block'
+            }}
+            onClick={() => Taro.switchTab({ url: '/pages/arrival/index' })}
+          >
+            前往到站确认
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView scrollY className={styles.page}>

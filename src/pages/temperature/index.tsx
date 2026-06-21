@@ -194,15 +194,15 @@ const TemperaturePage: React.FC = () => {
         </View>
         <View className={styles.chartLegend}>
           <View className={styles.legendItem}>
-            <View className={styles.legendDot} style={{ background: $color-success }} />
+            <View className={classnames(styles.legendDot, styles.legendSafe)} />
             <Text>正常区间</Text>
           </View>
           <View className={styles.legendItem}>
-            <View className={styles.legendDot} style={{ background: $color-warning }} />
+            <View className={classnames(styles.legendDot, styles.legendWarning)} />
             <Text>偏高温</Text>
           </View>
           <View className={styles.legendItem}>
-            <View className={styles.legendDot} style={{ background: $color-error }} />
+            <View className={classnames(styles.legendDot, styles.legendDanger)} />
             <Text>超标</Text>
           </View>
         </View>

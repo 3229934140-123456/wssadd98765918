@@ -72,6 +72,7 @@ export interface ArrivalRecord {
   unloadPhotoUrl: string;
   doorOpenDuration: number;
   doorOpenTime: number;
+  doorCloseTime: number;
   temperatureAtArrival: number;
   note?: string;
 }
@@ -83,6 +84,7 @@ export interface TripEvidence {
   driverName: string;
   plateNumber: string;
   routeName: string;
+  stopName?: string;
   cargoList: CargoInfo[];
   tempReadings: TempReading[];
   alerts: TempAlert[];

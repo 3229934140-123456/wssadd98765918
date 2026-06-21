@@ -145,19 +145,28 @@ const ArrivalPage: React.FC = () => {
     const sealPhoto = photos.find(p => p.key === 'seal')?.imageUrl || '';
     const unloadPhoto = photos.find(p => p.key === 'unload')?.imageUrl || '';
 
+    const finalDoorCloseTime = doorCloseTime || Date.now();
+    const finalDuration = doorCloseTime 
+      ? doorDuration 
+      : Math.floor((finalDoorCloseTime - doorOpenTime!) / 1000 / 60);
+
     const record: ArrivalRecord = {
       stopId: currentStop.id,
       arrivalTime: Date.now(),
       tempPhotoUrl: tempPhoto,
       sealPhotoUrl: sealPhoto,
       unloadPhotoUrl: unloadPhoto,
-      doorOpenDuration: doorDuration,
+      doorOpenDuration: finalDuration,
       doorOpenTime: doorOpenTime!,
+      doorCloseTime: finalDoorCloseTime,
       temperatureAtArrival: arrivalTemp
     };
 
     console.log('[ArrivalPage] 生成到站记录:', record);
     addArrivalRecord(record);
+
+    const evidence = generateEvidence(currentStop.id);
+    console.log('[ArrivalPage] 证据已生成:', evidence.taskId);
     setEvidenceGenerated(true);
     setCurrentStep(4);
 
@@ -179,8 +188,12 @@ const ArrivalPage: React.FC = () => {
       return;
     }
 
-    console.log('[ArrivalPage] 提交并前往下一站');
-    generateEvidence();
+    console.log('[ArrivalPage] 提交并前往下一站，使用已有证据，不覆盖');
+    const existingEvidence = useTripStore.getState().getEvidenceByStopId(currentStop.id);
+    if (existingEvidence) {
+      console.log('[ArrivalPage] 证据已存在:', existingEvidence.taskId);
+    }
+
     completeStop();
     setRecordSubmitted(true);
 
@@ -196,6 +209,7 @@ const ArrivalPage: React.FC = () => {
       setDoorCloseTime(null);
       setDoorDuration(0);
       setEvidenceGenerated(false);
+      setRecordSubmitted(false);
       setPhotos(prev => prev.map(p => ({ ...p, imageUrl: undefined })));
     }, 2000);
   };

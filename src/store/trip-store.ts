@@ -13,7 +13,6 @@ import {
   mockTodayTask,
   mockTempReadings,
   mockTempAlerts,
-  mockTripEvidence
 } from '@/data/mock-data';
 
 interface TripState {
@@ -25,6 +24,7 @@ interface TripState {
   currentStopIndex: number;
   tripStarted: boolean;
   tripEvidence: TripEvidence | null;
+  evidenceByStopId: Record<string, TripEvidence>;
 
   startTrip: () => void;
   getCurrentTemp: () => number;
@@ -35,7 +35,8 @@ interface TripState {
   addArrivalRecord: (record: ArrivalRecord) => void;
   setCurrentStop: (index: number) => void;
   completeStop: () => void;
-  generateEvidence: () => TripEvidence;
+  generateEvidence: (stopId: string) => TripEvidence;
+  getEvidenceByStopId: (stopId: string) => TripEvidence | null;
   getUnacknowledgedAlertsCount: () => number;
 }
 
@@ -48,6 +49,7 @@ export const useTripStore = create<TripState>((set, get) => ({
   currentStopIndex: 2,
   tripStarted: true,
   tripEvidence: null,
+  evidenceByStopId: {},
 
   startTrip: () => {
     console.log('[TripStore] 开始行程');
@@ -121,24 +123,74 @@ export const useTripStore = create<TripState>((set, get) => ({
     }));
   },
 
-  generateEvidence: (): TripEvidence => {
-    const { currentTask, driver, tempReadings, tempAlerts, arrivalRecords } = get();
+  generateEvidence: (stopId: string): TripEvidence => {
+    const { evidenceByStopId, currentTask, driver, tempReadings, tempAlerts, arrivalRecords } = get();
+
+    if (evidenceByStopId[stopId]) {
+      console.log('[TripStore] 证据已存在，直接返回:', stopId);
+      return evidenceByStopId[stopId];
+    }
+
+    const stopArrival = arrivalRecords.find(r => r.stopId === stopId);
+    if (!stopArrival) {
+      throw new Error('未找到到站记录，请先完成到站登记');
+    }
+
+    const stopInfo = currentTask.stopList.find(s => s.id === stopId);
+    const stopIndex = currentTask.stopList.findIndex(s => s.id === stopId);
+    const prevStopIndex = stopIndex > 0 ? stopIndex - 1 : 0;
+    const prevStopId = stopIndex > 0 ? currentTask.stopList[prevStopIndex].id : null;
+
+    const relevantReadings = tempReadings.filter(t => {
+      if (prevStopId) {
+        const prevArrival = arrivalRecords.find(r => r.stopId === prevStopId);
+        if (prevArrival && t.timestamp < prevArrival.doorCloseTime) return false;
+      }
+      return t.timestamp <= stopArrival.doorCloseTime;
+    });
+
+    const relevantAlerts = tempAlerts.filter(a => {
+      const reading = relevantReadings.find(r => r.id === a.readingId);
+      return !!reading;
+    });
+
     const evidence: TripEvidence = {
-      taskId: currentTask.id,
-      startTime: new Date(currentTask.startTime).getTime(),
-      endTime: Date.now(),
+      taskId: `${currentTask.id}-${stopId}`,
+      startTime: prevStopId 
+        ? (arrivalRecords.find(r => r.stopId === prevStopId)?.doorCloseTime || new Date(currentTask.startTime).getTime())
+        : new Date(currentTask.startTime).getTime(),
+      endTime: stopArrival.doorCloseTime,
       driverName: driver.name,
       plateNumber: driver.plateNumber,
       routeName: currentTask.routeName,
+      stopName: stopInfo?.name,
       cargoList: currentTask.cargoList,
-      tempReadings,
-      alerts: tempAlerts,
-      arrivals: arrivalRecords,
+      tempReadings: relevantReadings,
+      alerts: relevantAlerts,
+      arrivals: [stopArrival],
       generatedAt: Date.now()
     };
-    console.log('[TripStore] 生成行程证据:', evidence.taskId);
-    set({ tripEvidence: evidence });
+
+    console.log('[TripStore] 生成站点证据:', stopId, evidence.taskId);
+    set(state => ({
+      evidenceByStopId: {
+        ...state.evidenceByStopId,
+        [stopId]: evidence
+      },
+      tripEvidence: evidence
+    }));
     return evidence;
+  },
+
+  getEvidenceByStopId: (stopId: string): TripEvidence | null => {
+    const { evidenceByStopId, tripEvidence } = get();
+    if (evidenceByStopId[stopId]) {
+      return evidenceByStopId[stopId];
+    }
+    if (tripEvidence && tripEvidence.arrivals.some(a => a.stopId === stopId)) {
+      return tripEvidence;
+    }
+    return null;
   },
 
   getUnacknowledgedAlertsCount: () => {

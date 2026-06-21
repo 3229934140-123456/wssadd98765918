@@ -36,21 +36,98 @@ export function generateSuggestion(
 
 export async function playVoiceAlert(message: string): Promise<void> {
   console.log('[TempAlert] 播放语音提醒:', message);
+
+  try {
+    Taro.vibrateLong();
+  } catch (e) {
+    console.warn('[TempAlert] 震动不支持');
+  }
+
   try {
     Taro.showToast({
       title: message,
       icon: 'none',
       duration: 3000
     });
+  } catch (e) {
+    console.warn('[TempAlert] Toast失败');
+  }
+
+  try {
     if (process.env.TARO_ENV === 'weapp') {
       const plugin = requirePlugin && requirePlugin('WechatSI');
-      if (plugin) {
-        const manager = plugin.getRecordRecognitionManager();
-        console.log('[TempAlert] 微信语音插件可用');
+      if (plugin && plugin.textToSpeech) {
+        console.log('[TempAlert] 使用微信同声传译插件播放');
+        plugin.textToSpeech({
+          lang: 'zh_CN',
+          tts: true,
+          content: message,
+          success: (res: any) => {
+            console.log('[TempAlert] 语音合成成功:', res.filename);
+            if (res.filename) {
+              const audio = Taro.createInnerAudioContext();
+              audio.src = res.filename;
+              audio.play();
+              audio.onError((err) => {
+                console.error('[TempAlert] 音频播放错误:', err);
+                audio.destroy();
+              });
+              audio.onEnded(() => {
+                audio.destroy();
+              });
+            }
+          },
+          fail: (err: any) => {
+            console.error('[TempAlert] 语音合成失败:', err);
+            playBeepFallback();
+          }
+        });
+        return;
+      } else {
+        console.log('[TempAlert] 微信同声传译插件未配置，使用Web Speech API');
       }
     }
+
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      console.log('[TempAlert] 使用Web Speech API');
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      return;
+    }
+
+    playBeepFallback();
   } catch (e) {
-    console.error('[TempAlert] 语音提醒失败:', e);
+    console.error('[TempAlert] 语音提醒完全失败:', e);
+    playBeepFallback();
+  }
+}
+
+function playBeepFallback() {
+  console.log('[TempAlert] 使用蜂鸣提示');
+  try {
+    const audioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (audioContext) {
+      const ctx = new audioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 880;
+      gainNode.gain.value = 0.3;
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        ctx.close();
+      }, 500);
+    }
+  } catch (e) {
+    console.warn('[TempAlert] 蜂鸣也不支持');
   }
 }
 
