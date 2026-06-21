@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
@@ -6,38 +6,43 @@ import classnames from 'classnames';
 import { useTripStore } from '@/store/trip-store';
 import { cargoTypeLabels, stopTypeLabels } from '@/data/mock-data';
 import { formatDateTime } from '@/utils/temp-alert';
+import { TripEvidence } from '@/types/cold-chain';
 
 const EvidenceDetailPage: React.FC = () => {
   const router = useRouter();
-  const stopId = router.params.stopId;
-  const [evidence, setEvidence] = useState<any>(null);
+  const stopId = router.params.stopId as string;
 
-  const { driver, currentTask, getEvidenceByStopId, arrivalRecords } = useTripStore();
+  const { driver, currentTask, arrivalRecords } = useTripStore();
 
-  useEffect(() => {
-    if (stopId) {
-      const found = getEvidenceByStopId(stopId);
-      console.log('[EvidenceDetail] 查询证据 stopId:', stopId, 'found:', !!found);
-      if (found) {
-        setEvidence(found);
-      } else {
-        const stopRecord = arrivalRecords.find(r => r.stopId === stopId);
-        if (stopRecord) {
-          console.log('[EvidenceDetail] 找到到站记录但无证据，自动生成');
-          const newEvidence = useTripStore.getState().generateEvidence(stopId);
-          setEvidence(newEvidence);
-        } else {
-          setEvidence(null);
-        }
+  const evidence = useMemo<TripEvidence | null>(() => {
+    if (!stopId) return null;
+
+    const state = useTripStore.getState();
+    const found = state.getEvidenceByStopId(stopId);
+    if (found) {
+      console.log('[EvidenceDetail] 找到已有证据:', found.taskId);
+      return found;
+    }
+
+    const stopRecord = state.arrivalRecords.find(r => r.stopId === stopId);
+    if (stopRecord) {
+      try {
+        console.log('[EvidenceDetail] 找到到站记录，即时生成证据');
+        return state.generateEvidence(stopId);
+      } catch (e) {
+        console.error('[EvidenceDetail] 生成证据失败:', e);
+        return null;
       }
     }
-  }, [stopId, getEvidenceByStopId, arrivalRecords]);
+
+    return null;
+  }, [stopId, arrivalRecords]);
 
   const stopRecord = useMemo(() => {
-    if (!evidence) return null;
-    const found = evidence.arrivals.find((a: any) => a.stopId === stopId);
+    if (!evidence || !evidence.arrivals || evidence.arrivals.length === 0) return null;
+    const found = evidence.arrivals.find(a => a.stopId === stopId);
     if (found) return found;
-    return evidence.arrivals[evidence.arrivals.length - 1] || null;
+    return evidence.arrivals[evidence.arrivals.length - 1];
   }, [evidence, stopId]);
 
   const stopInfo = useMemo(() => {
@@ -46,7 +51,7 @@ const EvidenceDetailPage: React.FC = () => {
   }, [stopRecord, currentTask]);
 
   const tempStats = useMemo(() => {
-    if (evidence.tempReadings.length === 0) {
+    if (!evidence || !evidence.tempReadings || evidence.tempReadings.length === 0) {
       return { min: 0, max: 0, avg: 0, readings: [] };
     }
     const temps = evidence.tempReadings.map(r => r.temperature);
@@ -60,7 +65,15 @@ const EvidenceDetailPage: React.FC = () => {
 
   const tempItems = useMemo(() => {
     const readings = [...tempStats.readings].reverse().slice(0, 8);
-    const targetMax = Math.max(...evidence.cargoList.map((c: any) => c.targetTempMax));
+    if (!evidence || !evidence.cargoList || evidence.cargoList.length === 0) {
+      return readings.map(r => ({
+        ...r,
+        level: 'safe' as const,
+        width: '50%',
+        fillColor: '#4CAF50'
+      }));
+    }
+    const targetMax = Math.max(...evidence.cargoList.map(c => c.targetTempMax));
     return readings.map(r => {
       const diff = r.temperature - targetMax;
       let level: 'safe' | 'warning' | 'danger' = 'safe';
@@ -75,7 +88,7 @@ const EvidenceDetailPage: React.FC = () => {
         fillColor: level === 'safe' ? '#4CAF50' : level === 'warning' ? '#FF9800' : '#F44336'
       };
     });
-  }, [tempStats]);
+  }, [tempStats, evidence]);
 
   const handlePreviewPhoto = (url: string) => {
     const urls = stopRecord

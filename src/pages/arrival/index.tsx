@@ -18,7 +18,9 @@ const ArrivalPage: React.FC = () => {
     getCurrentTemp,
     completeStop,
     addArrivalRecord,
-    generateEvidence
+    generateEvidence,
+    arrivalRecords,
+    getEvidenceByStopId
   } = useTripStore();
 
   const currentStop = currentTask.stopList[currentStopIndex];
@@ -32,6 +34,29 @@ const ArrivalPage: React.FC = () => {
   const [arrivalTemp, setArrivalTemp] = useState(getCurrentTemp());
   const [evidenceGenerated, setEvidenceGenerated] = useState(false);
   const [recordSubmitted, setRecordSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!currentStop) return;
+    const existingRecord = arrivalRecords.find(r => r.stopId === currentStop.id);
+    const existingEvidence = getEvidenceByStopId(currentStop.id);
+    console.log('[ArrivalPage] 检查当前站数据:', currentStop.id, 
+      '有记录:', !!existingRecord, 
+      '有证据:', !!existingEvidence);
+    if (existingRecord) {
+      setDoorOpenTime(existingRecord.doorOpenTime);
+      setDoorCloseTime(existingRecord.doorCloseTime);
+      setDoorDuration(existingRecord.doorOpenDuration);
+      setArrivalTemp(existingRecord.temperatureAtArrival);
+      setPhotos(prev => prev.map(p => {
+        if (p.key === 'temp') return { ...p, imageUrl: existingRecord.tempPhotoUrl };
+        if (p.key === 'seal') return { ...p, imageUrl: existingRecord.sealPhotoUrl };
+        if (p.key === 'unload') return { ...p, imageUrl: existingRecord.unloadPhotoUrl };
+        return p;
+      }));
+      setCurrentStep(4);
+      setEvidenceGenerated(true);
+    }
+  }, [currentStop?.id]);
 
   const [photos, setPhotos] = useState<PhotoSlotData[]>([
     {

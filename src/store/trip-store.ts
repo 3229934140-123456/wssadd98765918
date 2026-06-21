@@ -138,40 +138,42 @@ export const useTripStore = create<TripState>((set, get) => ({
 
     const stopInfo = currentTask.stopList.find(s => s.id === stopId);
     const stopIndex = currentTask.stopList.findIndex(s => s.id === stopId);
-    const prevStopIndex = stopIndex > 0 ? stopIndex - 1 : 0;
-    const prevStopId = stopIndex > 0 ? currentTask.stopList[prevStopIndex].id : null;
+    const prevStopId = stopIndex > 0 ? currentTask.stopList[stopIndex - 1].id : null;
+
+    let startTime: number;
+    if (prevStopId) {
+      const prevArrival = arrivalRecords.find(r => r.stopId === prevStopId);
+      startTime = prevArrival?.doorCloseTime || new Date(currentTask.startTime).getTime();
+    } else {
+      startTime = new Date(currentTask.startTime).getTime();
+    }
+
+    const endTime = stopArrival.doorCloseTime || stopArrival.arrivalTime;
 
     const relevantReadings = tempReadings.filter(t => {
-      if (prevStopId) {
-        const prevArrival = arrivalRecords.find(r => r.stopId === prevStopId);
-        if (prevArrival && t.timestamp < prevArrival.doorCloseTime) return false;
-      }
-      return t.timestamp <= stopArrival.doorCloseTime;
+      return t.timestamp >= startTime && t.timestamp <= endTime;
     });
 
     const relevantAlerts = tempAlerts.filter(a => {
-      const reading = relevantReadings.find(r => r.id === a.readingId);
-      return !!reading;
+      return a.timestamp >= startTime && a.timestamp <= endTime;
     });
 
     const evidence: TripEvidence = {
       taskId: `${currentTask.id}-${stopId}`,
-      startTime: prevStopId 
-        ? (arrivalRecords.find(r => r.stopId === prevStopId)?.doorCloseTime || new Date(currentTask.startTime).getTime())
-        : new Date(currentTask.startTime).getTime(),
-      endTime: stopArrival.doorCloseTime,
+      startTime,
+      endTime,
       driverName: driver.name,
       plateNumber: driver.plateNumber,
       routeName: currentTask.routeName,
       stopName: stopInfo?.name,
-      cargoList: currentTask.cargoList,
+      cargoList: currentTask.cargoList || [],
       tempReadings: relevantReadings,
       alerts: relevantAlerts,
       arrivals: [stopArrival],
       generatedAt: Date.now()
     };
 
-    console.log('[TripStore] 生成站点证据:', stopId, evidence.taskId);
+    console.log('[TripStore] 生成站点证据:', stopId, evidence.taskId, '温度记录:', relevantReadings.length, '告警:', relevantAlerts.length);
     set(state => ({
       evidenceByStopId: {
         ...state.evidenceByStopId,

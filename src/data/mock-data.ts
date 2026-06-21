@@ -137,6 +137,7 @@ export const mockArrivalRecord: ArrivalRecord = {
   unloadPhotoUrl: 'https://picsum.photos/id/62/600/800',
   doorOpenDuration: 18,
   doorOpenTime: baseTime + 3 * 60 * 60 * 1000 + 15 * 60 * 1000,
+  doorCloseTime: baseTime + 3 * 60 * 60 * 1000 + 33 * 60 * 1000,
   temperatureAtArrival: -19.3
 };
 
