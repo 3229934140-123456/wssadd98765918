@@ -2,9 +2,10 @@ import React, { useMemo } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
+import classnames from 'classnames';
 import { useTripStore } from '@/store/trip-store';
 import CargoCard from '@/components/CargoCard';
-import { stopTypeLabels, cargoTypeLabels } from '@/data/mock-data';
+import { stopTypeLabels } from '@/data/mock-data';
 import { formatTime } from '@/utils/temp-alert';
 
 const HomePage: React.FC = () => {
@@ -130,7 +131,7 @@ const HomePage: React.FC = () => {
           <View className={styles.stopHeader}>
             <View className={styles.stopInfo}>
               <View className={styles.stopTypeName}>
-                <View className={`${styles.typeTag} ${styles[`tag-${stop.type}`]}>
+                <View className={classnames(styles.typeTag, styles[`tag-${stop.type}`])}>
                   {stopTypeLabels[stop.type]}
                 </View>
                 <Text className={styles.stopItemName}>
@@ -138,7 +139,7 @@ const HomePage: React.FC = () => {
                 </Text>
               </View>
             </View>
-            <View className={`${styles.stopStatusTag} ${styles[`status-${stop.status}`]}>
+            <View className={classnames(styles.stopStatusTag, styles[`status-${stop.status}`])}>
               {stop.status === 'completed' && '✓ 已完成'}
               {stop.status === 'arrived' && '进行中'}
               {stop.status === 'pending' && '待前往'}

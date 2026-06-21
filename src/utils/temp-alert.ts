@@ -39,9 +39,7 @@ export async function playVoiceAlert(message: string): Promise<void> {
 
   try {
     Taro.vibrateLong();
-  } catch (e) {
-    console.warn('[TempAlert] 震动不支持');
-  }
+  } catch (_) {}
 
   try {
     Taro.showToast({
@@ -49,60 +47,54 @@ export async function playVoiceAlert(message: string): Promise<void> {
       icon: 'none',
       duration: 3000
     });
-  } catch (e) {
-    console.warn('[TempAlert] Toast失败');
-  }
+  } catch (_) {}
 
   try {
     if (process.env.TARO_ENV === 'weapp') {
-      const plugin = requirePlugin && requirePlugin('WechatSI');
-      if (plugin && plugin.textToSpeech) {
-        console.log('[TempAlert] 使用微信同声传译插件播放');
-        plugin.textToSpeech({
-          lang: 'zh_CN',
-          tts: true,
-          content: message,
-          success: (res: any) => {
-            console.log('[TempAlert] 语音合成成功:', res.filename);
-            if (res.filename) {
-              const audio = Taro.createInnerAudioContext();
-              audio.src = res.filename;
-              audio.play();
-              audio.onError((err) => {
-                console.error('[TempAlert] 音频播放错误:', err);
-                audio.destroy();
-              });
-              audio.onEnded(() => {
-                audio.destroy();
-              });
+      try {
+        const wxObj = wx as any;
+        const plugin = wxObj.requirePlugin
+          ? wxObj.requirePlugin('WechatSI')
+          : null;
+        if (plugin && typeof plugin.textToSpeech === 'function') {
+          console.log('[TempAlert] 使用微信同声传译插件播放');
+          plugin.textToSpeech({
+            lang: 'zh_CN',
+            tts: true,
+            content: message,
+            success: (res: any) => {
+              if (res.filename) {
+                const audio = Taro.createInnerAudioContext();
+                audio.src = res.filename;
+                audio.play();
+                audio.onError(() => { audio.destroy(); });
+                audio.onEnded(() => { audio.destroy(); });
+              }
+            },
+            fail: () => {
+              playBeepFallback();
             }
-          },
-          fail: (err: any) => {
-            console.error('[TempAlert] 语音合成失败:', err);
-            playBeepFallback();
-          }
-        });
-        return;
-      } else {
-        console.log('[TempAlert] 微信同声传译插件未配置，使用Web Speech API');
+          });
+          return;
+        }
+      } catch (_) {
+        console.log('[TempAlert] 微信插件不可用，使用备用方案');
       }
     }
 
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
+    if (typeof globalThis !== 'undefined' && (globalThis as any).speechSynthesis) {
       console.log('[TempAlert] 使用Web Speech API');
       const utterance = new SpeechSynthesisUtterance(message);
       utterance.lang = 'zh-CN';
       utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
+      (globalThis as any).speechSynthesis.cancel();
+      (globalThis as any).speechSynthesis.speak(utterance);
       return;
     }
 
     playBeepFallback();
   } catch (e) {
-    console.error('[TempAlert] 语音提醒完全失败:', e);
+    console.error('[TempAlert] 语音提醒失败:', e);
     playBeepFallback();
   }
 }
@@ -110,9 +102,19 @@ export async function playVoiceAlert(message: string): Promise<void> {
 function playBeepFallback() {
   console.log('[TempAlert] 使用蜂鸣提示');
   try {
-    const audioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-    if (audioContext) {
-      const ctx = new audioContext();
+    if (process.env.TARO_ENV === 'weapp') {
+      const audio = Taro.createInnerAudioContext();
+      audio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+      audio.volume = 0.8;
+      audio.play();
+      audio.onEnded(() => { audio.destroy(); });
+      audio.onError(() => { audio.destroy(); });
+      return;
+    }
+
+    const AudioCtx = (globalThis as any).AudioContext || (globalThis as any).webkitAudioContext;
+    if (AudioCtx) {
+      const ctx = new AudioCtx();
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
       oscillator.connect(gainNode);
@@ -126,9 +128,7 @@ function playBeepFallback() {
         ctx.close();
       }, 500);
     }
-  } catch (e) {
-    console.warn('[TempAlert] 蜂鸣也不支持');
-  }
+  } catch (_) {}
 }
 
 export function shouldTriggerAlert(

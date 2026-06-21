@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
+import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import classnames from 'classnames';
 import { useTripStore } from '@/store/trip-store';
@@ -8,10 +8,9 @@ import StepIndicator, { StepItem } from '@/components/StepIndicator';
 import PhotoSlot from '@/components/PhotoSlot';
 import { PhotoSlotData, ArrivalRecord } from '@/types/cold-chain';
 import { stopTypeLabels } from '@/data/mock-data';
-import { formatTime, formatDateTime, formatDuration } from '@/utils/temp-alert';
+import { formatTime, formatDateTime } from '@/utils/temp-alert';
 
 const ArrivalPage: React.FC = () => {
-  const router = useRouter();
   const {
     currentTask,
     currentStopIndex,
@@ -24,13 +23,11 @@ const ArrivalPage: React.FC = () => {
   } = useTripStore();
 
   const currentStop = currentTask.stopList[currentStopIndex];
-  const previousStops = currentTask.stopList.slice(0, currentStopIndex);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [doorOpenTime, setDoorOpenTime] = useState<number | null>(null);
   const [doorCloseTime, setDoorCloseTime] = useState<number | null>(null);
   const [doorDuration, setDoorDuration] = useState<number>(0);
-  const [timerTick, setTimerTick] = useState(0);
   const [arrivalTemp, setArrivalTemp] = useState(getCurrentTemp());
   const [evidenceGenerated, setEvidenceGenerated] = useState(false);
   const [recordSubmitted, setRecordSubmitted] = useState(false);
@@ -86,7 +83,6 @@ const ArrivalPage: React.FC = () => {
         const now = Date.now();
         const elapsed = Math.floor((now - doorOpenTime) / 1000 / 60);
         setDoorDuration(elapsed);
-        setTimerTick(t => t + 1);
       }, 10000);
       return () => clearInterval(timer);
     }

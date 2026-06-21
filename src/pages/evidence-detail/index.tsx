@@ -12,7 +12,7 @@ const EvidenceDetailPage: React.FC = () => {
   const router = useRouter();
   const stopId = router.params.stopId as string;
 
-  const { driver, currentTask, arrivalRecords } = useTripStore();
+  const { currentTask, arrivalRecords } = useTripStore();
 
   const evidence = useMemo<TripEvidence | null>(() => {
     if (!stopId) return null;
