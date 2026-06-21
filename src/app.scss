@@ -1,0 +1,16 @@
+@use './styles/variables.scss' as *;
+
+page {
+  background: linear-gradient(180deg, $color-bg-gradient-top 0%, $color-bg-page 240rpx);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+}
+
+.pageContainer {
+  padding: 0 $page-padding $spacing-xl;
+  min-height: 100vh;
+  box-sizing: border-box;
+}

@@ -1,0 +1,449 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding: 0 $page-padding $spacing-xl;
+}
+
+/* ========== 告警横幅 ========== */
+.alertBanner {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  border-left: 8rpx solid;
+}
+
+.banner-warning {
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  border-color: $color-warning;
+}
+
+.banner-danger {
+  background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+  border-color: $color-error;
+}
+
+.banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.banner-title {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.bannerIcon {
+  font-size: 40rpx;
+}
+
+.bannerText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+}
+
+.banner-warning .bannerText {
+  color: #E65100;
+}
+
+.banner-danger .bannerText {
+  color: #C62828;
+}
+
+.bannerCount {
+  padding: 4rpx 16rpx;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.banner-warning .bannerCount {
+  color: #E65100;
+}
+
+.banner-danger .bannerCount {
+  color: #C62828;
+}
+
+.bannerMsg {
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-md;
+}
+
+.banner-warning .bannerMsg {
+  color: #EF6C00;
+}
+
+.banner-danger .bannerMsg {
+  color: #D32F2F;
+}
+
+.bannerVoiceBtn {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    background: rgba(255, 255, 255, 1);
+  }
+}
+
+.banner-warning .bannerVoiceBtn {
+  color: #E65100;
+}
+
+.banner-danger .bannerVoiceBtn {
+  color: #C62828;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: $spacing-lg 0 $spacing-md;
+
+  .titleText {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .titleBadge {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    background: $color-bg-hover;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-sm;
+  }
+}
+
+/* ========== 温度趋势 ========== */
+.trendCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.trendHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.trendTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.trendUpdate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.trendChart {
+  position: relative;
+  height: 320rpx;
+  margin-bottom: $spacing-md;
+}
+
+.chartCanvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.gridLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: $color-divider;
+}
+
+.tempLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  opacity: 0.6;
+}
+
+.line-max {
+  background: $color-error;
+}
+
+.line-min {
+  background: $color-primary;
+}
+
+.tempPoints {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.tempBar {
+  flex: 1;
+  margin: 0 2rpx;
+  background: linear-gradient(180deg, rgba(30, 136, 229, 0.8) 0%, rgba(30, 136, 229, 0.3) 100%);
+  border-radius: 4rpx 4rpx 0 0;
+  position: relative;
+  min-width: 8rpx;
+  transition: all $transition-base;
+}
+
+.tempBar.barWarning {
+  background: linear-gradient(180deg, rgba(255, 152, 0, 0.8) 0%, rgba(255, 152, 0, 0.3) 100%);
+}
+
+.tempBar.barDanger {
+  background: linear-gradient(180deg, rgba(244, 67, 54, 0.9) 0%, rgba(244, 67, 54, 0.4) 100%);
+}
+
+.tempLabels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4rpx;
+}
+
+.tempLabel {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  width: 100rpx;
+  text-align: center;
+}
+
+/* 图例 */
+.chartLegend {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xl;
+  padding-top: $spacing-md;
+  border-top: 2rpx solid $color-divider;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.legendDot {
+  width: 20rpx;
+  height: 8rpx;
+  border-radius: 4rpx;
+}
+
+/* ========== 告警列表 ========== */
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.alertCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  border-left: 8rpx solid;
+}
+
+.alertCard-warning {
+  border-color: $color-warning;
+}
+
+.alertCard-danger {
+  border-color: $color-error;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.alertLevel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.alertLevelBadge {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.badge-warning {
+  background: rgba(255, 152, 0, 0.1);
+  color: $color-warning;
+}
+
+.badge-danger {
+  background: rgba(244, 67, 54, 0.1);
+  color: $color-error;
+}
+
+.alertTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.alertReadings {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.readingItem {
+  flex: 1;
+
+  .readingLabel {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-bottom: 4rpx;
+  }
+
+  .readingValue {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+  }
+
+  .readingValue.danger {
+    color: $color-error;
+  }
+}
+
+.alertMessage {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.alertSuggestion {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  padding: $spacing-md;
+  background: rgba(30, 136, 229, 0.05);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.alertActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.ackBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-primary;
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.ackBtn.disabled {
+  background: $color-bg-hover;
+  color: $color-text-tertiary;
+}
+
+/* ========== 建议动作卡 ========== */
+.tipCard {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  border-left: 8rpx solid $color-success;
+}
+
+.tipTitle {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #2E7D32;
+  margin-bottom: $spacing-md;
+}
+
+.tipIcon {
+  font-size: 36rpx;
+}
+
+.tipList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.tipItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: #388E3C;
+  line-height: 1.5;
+}
+
+.tipNum {
+  width: 36rpx;
+  height: 36rpx;
+  background: $color-success;
+  color: $color-text-white;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  flex-shrink: 0;
+}
+
+.emptyState {
+  padding: $spacing-xl;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}

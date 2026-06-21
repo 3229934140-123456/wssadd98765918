@@ -1,0 +1,44 @@
+// ============================================
+// 肉类冷链司机App - 主题配色变量
+// ============================================
+
+// 品牌主题色：冷链深蓝
+$color-primary: #1E88E5;
+$color-primary-light: #42A5F5;
+$color-primary-dark: #1565C0;
+
+// 货物温区色
+$color-frozen: #00ACC1;      // 冷冻牛肉 - 深青
+$color-frozen-bg: rgba(0, 172, 193, 0.1);
+$color-chilled: #26A69A;     // 冷鲜猪肉 - 青绿
+$color-chilled-bg: rgba(38, 166, 154, 0.1);
+$color-poultry: #66BB6A;     // 分割禽肉 - 浅绿
+$color-poultry-bg: rgba(102, 187, 106, 0.1);
+
+// 功能色
+$color-success: #4CAF50;
+$color-warning: #FF9800;
+$color-error: #F44336;
+$color-info: #1E88E5;
+
+// 温度告警色
+$color-temp-safe: #4CAF50;
+$color-temp-warning: #FF9800;
+$color-temp-danger: #F44336;
+
+// 背景色
+$color-bg-page: #F5F7FA;
+$color-bg-card: #FFFFFF;
+$color-bg-hover: #ECEFF1;
+$color-bg-gradient-top: #E3F2FD;
+
+// 文本色
+$color-text-primary: #263238;
+$color-text-secondary: #546E7A;
+$color-text-tertiary: #90A4AE;
+$color-text-disabled: #B0BEC5;
+$color-text-white: #FFFFFF;
+
+// 边框色
+$color-border: #CFD8DC;
+$color-divider: #ECEFF1;

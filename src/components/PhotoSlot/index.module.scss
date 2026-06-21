@@ -1,0 +1,144 @@
+@use '@/styles/variables.scss' as *;
+
+.slotWrapper {
+  width: 100%;
+}
+
+.slotHeader {
+  margin-bottom: $spacing-sm;
+}
+
+.slotLabel {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.required {
+  color: $color-error;
+  margin-left: 4rpx;
+}
+
+.previewBox {
+  position: relative;
+  width: 100%;
+  height: 360rpx;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.previewImg {
+  width: 100%;
+  height: 100%;
+}
+
+.previewMask {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80rpx;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: $spacing-sm;
+}
+
+.previewHint {
+  color: $color-text-white;
+  font-size: $font-size-sm;
+}
+
+.retakeBtn {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  padding: $spacing-xs $spacing-md;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-round;
+  z-index: 2;
+}
+
+.retakeText {
+  color: $color-text-white;
+  font-size: $font-size-xs;
+}
+
+.uploadedBadge {
+  position: absolute;
+  top: $spacing-sm;
+  left: $spacing-sm;
+  padding: $spacing-xs $spacing-md;
+  background: $color-success;
+  border-radius: $radius-round;
+  z-index: 2;
+}
+
+.badgeText {
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.uploadBox {
+  width: 100%;
+  height: 360rpx;
+  border-radius: $radius-lg;
+  border: 4rpx dashed $color-border;
+  background: $color-bg-hover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba(30, 136, 229, 0.05);
+    border-color: $color-primary;
+  }
+}
+
+.requiredBox {
+  border-color: $color-primary;
+  background: rgba(30, 136, 229, 0.03);
+}
+
+.cameraIcon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-round;
+  background: rgba(30, 136, 229, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+}
+
+.cameraEmoji {
+  font-size: 48rpx;
+}
+
+.uploadHint {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  text-align: center;
+  padding: 0 $spacing-lg;
+}
+
+.uploadBtn {
+  margin-top: $spacing-sm;
+  padding: $spacing-xs $spacing-lg;
+  background: $color-primary;
+  color: $color-text-white;
+  border-radius: $radius-round;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}

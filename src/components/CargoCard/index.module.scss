@@ -1,0 +1,125 @@
+@use '@/styles/variables.scss' as *;
+
+.cargoCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.typeBadge {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-round;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-sm;
+}
+
+.badgeIcon {
+  font-size: $font-size-md;
+}
+
+.badgeText {
+  font-size: $font-size-sm;
+}
+
+.indexTag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+}
+
+.cargoName {
+  margin-bottom: $spacing-md;
+}
+
+.nameText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.weightRow {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.weightItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.weightLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.weightValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.infoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.infoCell {
+  width: calc(50% - #{$spacing-sm});
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.infoCellFull {
+  width: 100%;
+}
+
+.infoLabelRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
+}
+
+.infoDot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: $radius-round;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.lateTime {
+  color: $color-error;
+}

@@ -1,0 +1,394 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  padding: 0 $page-padding $spacing-xl;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: $spacing-lg 0 $spacing-md;
+
+  .titleText {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .titleBadge {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    background: $color-bg-hover;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-sm;
+  }
+}
+
+/* ========== 当前站点 ========== */
+.stopInfoCard {
+  margin-top: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.stopHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.stopTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.typeTag {
+  font-size: $font-size-xs;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-sm;
+  font-weight: $font-weight-medium;
+}
+
+.tag-slaughterhouse {
+  background: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+}
+
+.tag-warehouse {
+  background: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
+}
+
+.tag-store {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+}
+
+.stopStatus {
+  padding: $spacing-xs $spacing-md;
+  background: rgba(30, 136, 229, 0.1);
+  color: $color-primary;
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.stopAddress {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.stopMeta {
+  display: flex;
+  gap: $spacing-lg;
+}
+
+.metaItem {
+  flex: 1;
+
+  .metaLabel {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-bottom: 4rpx;
+  }
+
+  .metaValue {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+}
+
+/* ========== 步骤指示 ========== */
+.stepCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+/* ========== 到站时间卡 ========== */
+.timeCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.timeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.timeTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.timeDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.08) 0%, rgba(30, 136, 229, 0.02) 100%);
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+}
+
+.timeLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-sm;
+}
+
+.timeValue {
+  font-size: 72rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  letter-spacing: 2rpx;
+}
+
+.timerBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  background: $color-primary;
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.timerBtn.stop {
+  background: $color-error;
+}
+
+.durationRow {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+}
+
+.durationItem {
+  flex: 1;
+  text-align: center;
+
+  .durationLabel {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-bottom: 4rpx;
+  }
+
+  .durationValue {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+  }
+}
+
+.tempAtArrival {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba(0, 172, 193, 0.08);
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tempLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.tempValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-frozen;
+}
+
+/* ========== 拍照区域 ========== */
+.photoCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.photoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.photoTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.photoCount {
+  font-size: $font-size-xs;
+  padding: $spacing-xs $spacing-md;
+  background: $color-bg-hover;
+  color: $color-text-tertiary;
+  border-radius: $radius-round;
+}
+
+.photoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+/* ========== 行程证据卡 ========== */
+.evidenceCard {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 8rpx 32rpx rgba(26, 26, 46, 0.3);
+}
+
+.evidenceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.evidenceTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.evidenceIcon {
+  font-size: 36rpx;
+}
+
+.evidenceBadge {
+  font-size: $font-size-xs;
+  padding: $spacing-xs $spacing-md;
+  background: rgba(76, 175, 80, 0.2);
+  color: #81C784;
+  border-radius: $radius-round;
+  border: 2rpx solid rgba(76, 175, 80, 0.4);
+}
+
+.evidenceBody {
+  padding: $spacing-md;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+}
+
+.evidenceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xs 0;
+
+  &:not(:last-child) {
+    border-bottom: 2rpx solid rgba(255, 255, 255, 0.08);
+    margin-bottom: $spacing-xs;
+    padding-bottom: $spacing-sm;
+  }
+}
+
+.evidenceRowLabel {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.evidenceRowValue {
+  font-size: $font-size-sm;
+  color: #fff;
+  font-weight: $font-weight-medium;
+}
+
+.viewEvidenceBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+
+  &:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* ========== 提交按钮 ========== */
+.actionBar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding calc($spacing-md + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent 0%, $color-bg-page 20%, $color-bg-page 100%);
+  margin-top: $spacing-lg;
+}
+
+.submitBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-success 0%, #66BB6A 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.3);
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.submitBtn.disabled {
+  background: $color-bg-hover;
+  color: $color-text-tertiary;
+  box-shadow: none;
+}
+
+.submitBtn.generate {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  box-shadow: 0 8rpx 24rpx rgba(30, 136, 229, 0.3);
+}
