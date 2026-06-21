@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
@@ -23,6 +23,27 @@ const ArrivalPage: React.FC = () => {
   } = useTripStore();
 
   const currentStop = currentTask.stopList[currentStopIndex];
+
+  const [photos, setPhotos] = useState<PhotoSlotData[]>([
+    {
+      key: 'temp',
+      label: '第一步：拍摄车厢温度表',
+      tip: '请清晰拍摄温控器显示屏读数，确保温度数值可辨认',
+      required: true
+    },
+    {
+      key: 'seal',
+      label: '第二步：拍摄货物封签',
+      tip: '对准车门封签或铅封特写，确保封签编号清晰可见',
+      required: true
+    },
+    {
+      key: 'unload',
+      label: '第三步：拍摄卸货现场',
+      tip: '拍摄完整卸货场景，包含货物、人员和时间标识',
+      required: true
+    }
+  ]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [doorOpenTime, setDoorOpenTime] = useState<number | null>(null);
@@ -54,27 +75,6 @@ const ArrivalPage: React.FC = () => {
       setEvidenceGenerated(true);
     }
   }, [currentStop?.id]);
-
-  const [photos, setPhotos] = useState<PhotoSlotData[]>([
-    {
-      key: 'temp',
-      label: '第一步：拍摄车厢温度表',
-      tip: '请清晰拍摄温控器显示屏读数，确保温度数值可辨认',
-      required: true
-    },
-    {
-      key: 'seal',
-      label: '第二步：拍摄货物封签',
-      tip: '对准车门封签或铅封特写，确保封签编号清晰可见',
-      required: true
-    },
-    {
-      key: 'unload',
-      label: '第三步：拍摄卸货现场',
-      tip: '拍摄完整卸货场景，包含货物、人员和时间标识',
-      required: true
-    }
-  ]);
 
   // 开门计时器
   useEffect(() => {

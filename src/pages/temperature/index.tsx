@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { useTripStore } from '@/store/trip-store';
 import TempGauge from '@/components/TempGauge';
 import {
-  getTempStatusColor,
   getTempStatusText,
   formatDateTime,
   playVoiceAlert,
